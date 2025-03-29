@@ -1,6 +1,5 @@
 // API route for generating practice plans
 import { NextRequest } from 'next/server'
-import { D1Database } from '@cloudflare/workers-types'
 import { 
   getAgeGroupById, 
   getSkillCategoryById, 
