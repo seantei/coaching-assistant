@@ -17,12 +17,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const plan = await generatePracticePlan({
-      ageGroupId: data.ageGroupId,
-      skillCategoryIds: data.skillCategoryIds,
-      practiceLength: data.practiceLength,
-      drills: [] // optional or empty initial value
-    });
+    // ✅ Pass arguments as expected by the function
+    const plan = await generatePracticePlan(
+      data.ageGroupId,
+      data.skillCategoryIds,
+      data.practiceLength,
+      [] // empty array for drills
+    );
 
     return NextResponse.json(plan);
   } catch (error: any) {
