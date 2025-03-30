@@ -1,48 +1,34 @@
-import {
-  Drill,
-  PracticePlan,
-  PracticePlanFormInput,
-  WarmUp,
-  CoolDown,
-} from './models';
+// practice-generator.ts
 
-export async function generatePracticePlan({
-  ageGroupId,
-  skillCategoryIds,
-  practiceLength,
-}: PracticePlanFormInput): Promise<PracticePlan> {
-  // Placeholder mocks
-  const warmUps: WarmUp[] = [
-    {
-      id: 1,
-      name: 'Dynamic Stretches',
-      description: 'Loosen up the muscles with dynamic movements',
-      ageGroups: [{ id: ageGroupId, name: 'U10' }],
-    },
-  ];
+import { Drill, PracticePlanFormInput } from './models';
 
-  const drills: Drill[] = skillCategoryIds.map((skillCategoryId, index) => ({
-    id: index + 1,
-    name: `Drill ${index + 1}`,
-    description: `Description for drill ${index + 1}`,
-    ageGroups: [{ id: ageGroupId, name: 'U10' }],
-    skillCategories: [{ id: skillCategoryId, name: `Skill ${skillCategoryId}` }],
-  }));
+export async function generatePracticePlan(
+  ageGroupId: number,
+  skillCategoryIds: number[],
+  practiceLength: number,
+  drills: Drill[]
+): Promise<any> {
+  // 🧠 Example logic: generate a mock plan
 
-  const coolDowns: CoolDown[] = [
-    {
-      id: 1,
-      name: 'Static Stretches',
-      description: 'Wind down with some static stretching',
-      ageGroups: [{ id: ageGroupId, name: 'U10' }],
-    },
-  ];
+  const minutesPerDrill = Math.floor(practiceLength / skillCategoryIds.length);
+
+  const generatedPlan = skillCategoryIds.map((id, index) => {
+    return {
+      skillCategoryId: id,
+      drills: [
+        {
+          id: index + 1,
+          name: `Drill for Skill ${id}`,
+          description: `Practice drill for skill category ${id}`,
+          durationMinutes: minutesPerDrill,
+        },
+      ],
+    };
+  });
 
   return {
-    id: Date.now(),
-    name: `Practice Plan - ${new Date().toLocaleDateString()}`,
-    warmUps,
-    drills,
-    coolDowns,
+    ageGroupId,
+    practiceLength,
+    plan: generatedPlan,
   };
 }

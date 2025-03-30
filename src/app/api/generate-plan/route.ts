@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     }
 
     const plan = await generatePracticePlan(
-      [], // drills go first
+      [], // empty drills array first
       data.ageGroupId,
       data.skillCategoryIds,
       data.practiceLength
