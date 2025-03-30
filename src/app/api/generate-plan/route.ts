@@ -1,4 +1,3 @@
-// API route for generating practice plans
 import { NextRequest, NextResponse } from 'next/server';
 import { generatePracticePlan } from '../../../lib/db/practice-generator';
 import { PracticePlanFormInput } from '@/lib/db/models';
@@ -16,24 +15,36 @@ export async function POST(request: NextRequest) {
     const data = await request.json() as PracticePlanFormInput;
 
     // Validate input
-    if (!data.ageGroupId || !data.skillCategoryId || !data.practiceLengthMinutes) {
-      return NextResponse.json({ error: 'Missing required input fields.' }, { status: 400 });
+    if (
+      !data.ageGroupId ||
+      !data.skillCategoryIds?.length ||
+      !data.practiceLengthMinutes
+    ) {
+      return NextResponse.json(
+        { error: 'Missing required input fields.' },
+        { status: 400 }
+      );
     }
 
-    // Get required data from the database
+    // Fetch needed info from DB
     const ageGroup = await getAgeGroupById(data.ageGroupId);
-    const skillCategory = await getSkillCategoryById(data.skillCategoryId);
+    const skillCategories = await Promise.all(
+      data.skillCategoryIds.map((id) => getSkillCategoryById(id))
+    );
     const drills = await getDrills();
     const warmUps = await getWarmUps(data.ageGroupId);
     const coolDowns = await getCoolDowns(data.ageGroupId);
 
-    if (!ageGroup || !skillCategory) {
-      return NextResponse.json({ error: 'Invalid age group or skill category.' }, { status: 400 });
+    if (!ageGroup || skillCategories.some((cat) => !cat)) {
+      return NextResponse.json(
+        { error: 'Invalid age group or one or more skill categories.' },
+        { status: 400 }
+      );
     }
 
     const plan = generatePracticePlan({
       ageGroup,
-      skillCategory,
+      skillCategories: skillCategories.filter(Boolean),
       practiceLengthMinutes: data.practiceLengthMinutes,
       drills,
       warmUps,
