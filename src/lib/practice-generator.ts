@@ -3,12 +3,9 @@
 import { Drill, PracticePlanFormInput } from './models';
 
 export async function generatePracticePlan(
-  ageGroupId: number,
-  skillCategoryIds: number[],
-  practiceLength: number,
-  drills: Drill[]
+  input: PracticePlanFormInput
 ): Promise<any> {
-  // 🧠 Example logic: generate a mock plan
+  const { ageGroupId, skillCategoryIds, practiceLength } = input;
 
   const minutesPerDrill = Math.floor(practiceLength / skillCategoryIds.length);
 

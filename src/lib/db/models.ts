@@ -9,6 +9,6 @@ export interface Drill {
 
 export interface PracticePlanFormInput {
   ageGroupId: number;
-  skillCategoryIds: number[]; // ✅ Matches what route.ts and practice-generator.ts expect
+  skillCategoryIds: number[];
   practiceLength: number;
 }

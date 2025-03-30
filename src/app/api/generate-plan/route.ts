@@ -1,10 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { generatePracticePlan } from '@/lib/db/practice-generator';
-import { PracticePlanFormInput } from '@/lib/db/database';
+// route.ts
 
-export async function POST(req: NextRequest) {
+import { NextResponse } from 'next/server';
+import { generatePracticePlan } from '@/app/api/generate-plan/practice-generator';
+import { PracticePlanFormInput } from '@/app/api/generate-plan/models';
+
+export async function POST(req: Request) {
   try {
-    const data = (await req.json()) as PracticePlanFormInput;
+    const data: PracticePlanFormInput = await req.json();
 
     if (
       !data.ageGroupId ||
@@ -17,14 +19,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const plan = await generatePracticePlan(
-      [], // empty drills array first
-      data.ageGroupId,
-      data.skillCategoryIds,
-      data.practiceLength
-    );
+    const plan = await generatePracticePlan(data);
 
-    return NextResponse.json({ plan });
+    return NextResponse.json(plan);
   } catch (error) {
     console.error('Error generating practice plan:', error);
     return NextResponse.json(
