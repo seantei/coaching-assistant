@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generatePracticePlan } from '../../../lib/db/practice-generator';
-import {
-  PracticePlanFormInput
-} from '@/lib/db/models';
+import { generatePracticePlan } from '@/lib/practice-generator';
+import { PracticePlanFormInput } from '@/lib/db/models';
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,12 +12,26 @@ export async function POST(req: NextRequest) {
       !data.skillCategoryIds?.length ||
       !data.practiceLength
     ) {
-      return NextResponse.json({ error: 'Missing required input fields.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing required input fields.' },
+        { status: 400 }
+      );
     }
 
-    // Pass arguments individually as expected by the function
+    // Generate the plan with an empty drills array
     const plan = await generatePracticePlan(
       data.ageGroupId,
       data.skillCategoryIds,
       data.practiceLength,
-      undefined // if there's a 4
+      [] // <--- this fixes the error
+    );
+
+    return NextResponse.json({ plan }, { status: 200 });
+  } catch (error) {
+    console.error('Error generating practice plan:', error);
+    return NextResponse.json(
+      { error: 'An unexpected error occurred.' },
+      { status: 500 }
+    );
+  }
+}
