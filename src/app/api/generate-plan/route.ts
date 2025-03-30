@@ -6,12 +6,12 @@ export async function POST(req: Request) {
   try {
     const data: PracticePlanFormInput = await req.json();
 
-    // ✅ Pass arguments as expected: drills, ageGroupId, skillCategoryIds, practiceLength
+    // ✅ Match argument order and types for generatePracticePlan
     const plan = await generatePracticePlan(
-      [], // empty array for drills
       data.ageGroupId,
       data.skillCategoryIds,
-      data.practiceLength
+      data.practiceLength,
+      [] // pass empty array of drills
     );
 
     return NextResponse.json(plan);
