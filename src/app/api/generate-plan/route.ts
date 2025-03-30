@@ -17,15 +17,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required input fields.' }, { status: 400 });
     }
 
-    const plan = await generatePracticePlan({
-      ageGroupId: data.ageGroupId,
-      skillCategoryIds: data.skillCategoryIds,
-      practiceLength: data.practiceLength,
-    });
-
-    return NextResponse.json(plan);
-  } catch (error) {
-    console.error('[generatePlan]', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  }
-}
+    // Pass arguments individually as expected by the function
+    const plan = await generatePracticePlan(
+      data.ageGroupId,
+      data.skillCategoryIds,
+      data.practiceLength,
+      undefined // if there's a 4
