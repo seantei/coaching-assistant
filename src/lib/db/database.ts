@@ -1,48 +1,42 @@
-// src/lib/db/database.ts
-// TEMP: mock import for D1Database to avoid build errors
-type D1Database = any
+import { AgeGroup, CoolDown, Drill, PracticePlan, SkillCategory, WarmUp } from './models';
 
-import {
-  AgeGroup,
-  SkillCategory,
-  WarmUp,
-  CoolDown,
-  Drill,
-  PracticePlan,
-} from './models'
-
-export async function getAgeGroups(db: D1Database): Promise<AgeGroup[]> {
-  return []
+// Replace all D1Database types with `any`
+export async function getAgeGroups(db: any): Promise<AgeGroup[]> {
+  return [];
 }
-
-export async function getAgeGroupById(db: D1Database, id: number): Promise<AgeGroup | null> {
-  return null
+export async function getAgeGroupById(db: any, id: number): Promise<AgeGroup | null> {
+  return null;
 }
-
-export async function getSkillCategories(db: D1Database): Promise<SkillCategory[]> {
-  return []
+export async function getSkillCategories(db: any): Promise<SkillCategory[]> {
+  return [];
 }
-
-export async function getSkillCategoryById(db: D1Database, id: number): Promise<SkillCategory | null> {
-  return null
+export async function getSkillCategoryById(db: any, id: number): Promise<SkillCategory | null> {
+  return null;
 }
-
-export async function getWarmUps(db: D1Database, ageGroupId?: number): Promise<WarmUp[]> {
-  return []
+export async function getWarmUps(db: any, ageGroupId?: number): Promise<WarmUp[]> {
+  return [];
 }
-
-export async function getCoolDowns(db: D1Database, ageGroupId?: number): Promise<CoolDown[]> {
-  return []
+export async function getCoolDowns(db: any, ageGroupId?: number): Promise<CoolDown[]> {
+  return [];
 }
-
-export async function getDrills(db: D1Database, skillCategoryId?: number, ageGroupId?: number): Promise<Drill[]> {
-  return []
+export async function getDrills(db: any, skillCategoryId: number, ageGroupId: number): Promise<Drill[]> {
+  return [];
 }
-
-export async function createPracticePlan(db: D1Database, input: PracticePlan): Promise<number> {
-  return 1
+export async function getDrillById(db: any, id: number): Promise<Drill | null> {
+  return null;
 }
-
-export async function addPracticeSection(db: D1Database, planId: number, section: any): Promise<void> {
-  return
+export async function getDrillSkillCategories(db: any, drillId: number): Promise<SkillCategory[]> {
+  return [];
+}
+export async function getDrillAgeGroups(db: any, drillId: number): Promise<AgeGroup[]> {
+  return [];
+}
+export async function createPracticePlan(db: any, data: any): Promise<number> {
+  return 1;
+}
+export async function addPracticeSection(db: any, planId: number, section: any): Promise<void> {
+  return;
+}
+export async function getPracticePlanById(db: any, id: number): Promise<PracticePlan | null> {
+  return null;
 }
