@@ -1,21 +1,29 @@
-import { Drill, PracticePlanFormInput } from './models'
+import { Drill } from './models';
 
 export async function generatePracticePlan(
-  drills: Drill[],
-  warmUps: Drill[],
-  coolDowns: Drill[],
-  data: PracticePlanFormInput
-) {
-  // Simple placeholder logic for now
+  ageGroupId: number,
+  skillCategoryIds: number[],
+  practiceLength: number
+): Promise<any> {
+  const minutesPerDrill = Math.floor(practiceLength / skillCategoryIds.length);
+
+  const generatedPlan = skillCategoryIds.map((id, index) => {
+    return {
+      skillCategoryId: id,
+      drills: [
+        {
+          id: index + 1,
+          name: `Drill for Skill ${id}`,
+          description: `Practice drill for skill category ${id}`,
+          durationMinutes: minutesPerDrill,
+        },
+      ],
+    };
+  });
+
   return {
-    sections: [
-      { title: 'Warm-Up', drills: warmUps },
-      { title: 'Skill Drills', drills: drills },
-      { title: 'Cool Down', drills: coolDowns }
-    ],
-    metadata: {
-      ageGroupId: data.ageGroupId,
-      skillCategoryId: data.skillCategoryId
-    }
-  }
+    ageGroupId,
+    practiceLength,
+    plan: generatedPlan,
+  };
 }
