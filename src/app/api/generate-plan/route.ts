@@ -1,22 +1,35 @@
-import { NextResponse } from "next/server";
-import { generatePracticePlan } from "@/lib/db/practice-generator";
-import { PracticePlanFormInput } from "@/lib/db/models";
+import { NextRequest, NextResponse } from 'next/server';
+import { generatePracticePlan } from '@/lib/db/practice-generator';
+import { PracticePlanFormInput } from '@/lib/db/database';
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const data: PracticePlanFormInput = await req.json();
+    const data = (await req.json()) as PracticePlanFormInput;
 
-    // ✅ Match argument order and types for generatePracticePlan
+    if (
+      !data.ageGroupId ||
+      !data.skillCategoryIds?.length ||
+      !data.practiceLength
+    ) {
+      return NextResponse.json(
+        { error: 'Missing required input fields.' },
+        { status: 400 }
+      );
+    }
+
     const plan = await generatePracticePlan(
+      [], // drills go first
       data.ageGroupId,
       data.skillCategoryIds,
-      data.practiceLength,
-      [] // pass empty array of drills
+      data.practiceLength
     );
 
-    return NextResponse.json(plan);
+    return NextResponse.json({ plan });
   } catch (error) {
-    console.error("Error generating practice plan:", error);
-    return NextResponse.json({ error: "Failed to generate practice plan" }, { status: 500 });
+    console.error('Error generating practice plan:', error);
+    return NextResponse.json(
+      { error: 'Failed to generate practice plan.' },
+      { status: 500 }
+    );
   }
 }
