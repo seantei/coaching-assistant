@@ -1,6 +1,5 @@
 // Database access functions for Coaches Assistant
 
-import { D1Database } from '@cloudflare/workers-types';
 import { 
   AgeGroup, 
   SkillCategory, 
