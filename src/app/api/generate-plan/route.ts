@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 
-import { generatePracticePlan } from '@/lib/db/practice-generator';
+import { generatePracticePlan } from '../../../lib/db/practice-generator'
 import {
   PracticePlanFormInput,
   getAgeGroupById,
