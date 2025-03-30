@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generatePracticePlan } from '@/lib/practice-generator';
+import { generatePracticePlan } from '@/lib/db/practice-generator';
 import { PracticePlanFormInput } from '@/lib/db/models';
 
 export async function POST(req: NextRequest) {
   try {
     const data: PracticePlanFormInput = await req.json();
 
-    // Validate input
     if (
       !data.ageGroupId ||
       !data.skillCategoryIds?.length ||
@@ -18,19 +17,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate the plan with an empty drills array
-    const plan = await generatePracticePlan(
-      data.ageGroupId,
-      data.skillCategoryIds,
-      data.practiceLength,
-      [] // <--- this fixes the error
-    );
+    const plan = await generatePracticePlan({
+      ageGroupId: data.ageGroupId,
+      skillCategoryIds: data.skillCategoryIds,
+      practiceLength: data.practiceLength,
+      drills: [] // optional or empty initial value
+    });
 
-    return NextResponse.json({ plan }, { status: 200 });
-  } catch (error) {
-    console.error('Error generating practice plan:', error);
+    return NextResponse.json(plan);
+  } catch (error: any) {
+    console.error('Error generating plan:', error);
     return NextResponse.json(
-      { error: 'An unexpected error occurred.' },
+      { error: 'Internal server error', details: error.message },
       { status: 500 }
     );
   }
