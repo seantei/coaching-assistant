@@ -1,45 +1,14 @@
-export interface AgeGroup {
-  id: number;
-  name: string;
-}
-
-export interface SkillCategory {
-  id: number;
-  name: string;
-}
-
-export interface WarmUp {
-  id: number;
-  name: string;
-  description: string;
-  ageGroups: AgeGroup[];
-}
-
-export interface CoolDown {
-  id: number;
-  name: string;
-  description: string;
-  ageGroups: AgeGroup[];
-}
+// models.ts
 
 export interface Drill {
   id: number;
   name: string;
   description: string;
-  ageGroups: AgeGroup[];
-  skillCategories: SkillCategory[];
-}
-
-export interface PracticePlan {
-  id: number;
-  name: string;
-  warmUps: WarmUp[];
-  drills: Drill[];
-  coolDowns: CoolDown[];
+  durationMinutes: number;
 }
 
 export interface PracticePlanFormInput {
   ageGroupId: number;
-  skillCategoryIds: number[];
-  practiceLength: number; // renamed to match usage in route.ts
+  skillCategoryIds: number[]; // ✅ Matches what route.ts and practice-generator.ts expect
+  practiceLength: number;
 }
