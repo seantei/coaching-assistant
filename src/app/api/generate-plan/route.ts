@@ -1,56 +1,48 @@
-import { NextRequest } from 'next/server';
-
-import { generatePracticePlan } from '../../../lib/db/practice-generator'
+// API route for generating practice plans
+import { NextRequest, NextResponse } from 'next/server';
+import { generatePracticePlan } from '../../../lib/db/practice-generator';
+import { PracticePlanFormInput } from '@/lib/db/models';
 import {
-  PracticePlanFormInput,
   getAgeGroupById,
   getSkillCategoryById,
   getDrills,
-  getWarmUps,
   getCoolDowns,
-  createPracticePlan,
-  addPracticeSection,
+  getWarmUps,
 } from '@/lib/db/database';
 
-// TEMP: mock db object to allow successful build on Vercel
-const db = {} as any;
-
+// POST /api/generate-plan
 export async function POST(request: NextRequest) {
   try {
-    const data = (await request.json()) as PracticePlanFormInput;
+    const data = await request.json() as PracticePlanFormInput;
 
     // Validate input
-    if (!data.ageGroupId || !data.skillCategoryId) {
-      return new Response(JSON.stringify({ error: 'Missing required fields' }), {
-        status: 400,
-      });
+    if (!data.ageGroupId || !data.skillCategoryId || !data.practiceLengthMinutes) {
+      return NextResponse.json({ error: 'Missing required input fields.' }, { status: 400 });
     }
 
-    const ageGroup = await getAgeGroupById(db, data.ageGroupId);
-    const skillCategory = await getSkillCategoryById(db, data.skillCategoryId);
+    // Get required data from the database
+    const ageGroup = await getAgeGroupById(data.ageGroupId);
+    const skillCategory = await getSkillCategoryById(data.skillCategoryId);
+    const drills = await getDrills();
+    const warmUps = await getWarmUps(data.ageGroupId);
+    const coolDowns = await getCoolDowns(data.ageGroupId);
 
     if (!ageGroup || !skillCategory) {
-      return new Response(JSON.stringify({ error: 'Invalid age group or skill category' }), {
-        status: 400,
-      });
+      return NextResponse.json({ error: 'Invalid age group or skill category.' }, { status: 400 });
     }
 
-    const drills = await getDrills(db, data.skillCategoryId, data.ageGroupId);
-    const warmUps = await getWarmUps(db, data.ageGroupId);
-    const coolDowns = await getCoolDowns(db, data.ageGroupId);
-
-    const plan = await generatePracticePlan(drills, warmUps, coolDowns, data);
-
-    const practicePlanId = await createPracticePlan(db, data);
-    await addPracticeSection(db, practicePlanId, plan);
-
-    return new Response(JSON.stringify({ success: true, practicePlanId }), {
-      status: 200,
+    const plan = generatePracticePlan({
+      ageGroup,
+      skillCategory,
+      practiceLengthMinutes: data.practiceLengthMinutes,
+      drills,
+      warmUps,
+      coolDowns,
     });
+
+    return NextResponse.json(plan);
   } catch (error) {
-    console.error('Error generating plan:', error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
-      status: 500,
-    });
+    console.error('Error generating practice plan:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
